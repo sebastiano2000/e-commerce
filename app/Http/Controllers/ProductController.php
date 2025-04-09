@@ -23,7 +23,8 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('products.create');
+        $categories = \App\Models\Category::pluck('name', 'id');
+        return view('products.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -31,6 +32,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         Product::create([
@@ -43,7 +45,8 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $categories = \App\Models\Category::pluck('name', 'id');
+        return view('products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, Product $product)
@@ -51,6 +54,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         $product->update([
@@ -66,6 +70,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('categories');
         return view('products.show', compact('product'));
     }
 }

@@ -13,8 +13,7 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    // Relationship to get all child (sub) categories
-    public function children(): HasMany
+    public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
     }

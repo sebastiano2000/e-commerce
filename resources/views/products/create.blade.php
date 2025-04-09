@@ -7,6 +7,20 @@
     <form action="{{ route('products.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
         @csrf
         <div class="mb-4">
+            <label for="category_id" class="block font-semibold mb-1">Category</label>
+            <select class="w-full p-2 rounded border border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                <option value="">-- Choose Category --</option>
+                @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}" {{ old('category_id', $product->category_id ?? '') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('category_id')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="mb-4">
             <label class="block text-gray-700">Product Name</label>
             <input type="text" name="name" class="w-full border rounded px-3 py-2" required>
         </div>

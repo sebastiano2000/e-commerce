@@ -14,7 +14,7 @@
             <thead class="bg-gray-100">
                 <tr>
                     <th class="p-4 border-b text-gray-700">#</th>
-                    <th class="p-4 border-b text-gray-700">Name</th>
+                    <th class="p-4 border-b text-gray-700">Category Name</th>
                     <th class="p-4 border-b text-gray-700 text-center">Actions</th>
                 </tr>
             </thead>
@@ -27,7 +27,7 @@
                             <a href="{{ route('categories.edit', $category) }}" class="text-blue-600 hover:text-blue-800 transition">
                                 Edit
                             </a>
-                            <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                            <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-800 transition">

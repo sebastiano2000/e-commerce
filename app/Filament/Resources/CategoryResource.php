@@ -19,11 +19,10 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                // Name field is required
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->label('Category Name'),
-                // Bonus: Allow selection of a parent category for subcategories
+                    
                 Forms\Components\Select::make('parent_id')
                     ->relationship('parent', 'name')
                     ->label('Parent Category')

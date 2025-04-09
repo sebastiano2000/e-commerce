@@ -3,15 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\FileUpload;
 
 class ProductResource extends Resource
 {
@@ -22,19 +20,25 @@ class ProductResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\Textarea::make('description'),
-                Forms\Components\TextInput::make('price')
-                    ->numeric()
-                    ->required(),
-                Forms\Components\TextInput::make('image_url'),
-                Forms\Components\Select::make('categories')
-                    ->relationship('categories', 'name')
-                    ->multiple()
-                    ->preload(),
-            ]);
+        ->schema([
+            Forms\Components\TextInput::make('name')
+                ->required(),
+            Forms\Components\Textarea::make('description'),
+            Forms\Components\TextInput::make('price')
+                ->numeric()
+                ->required(),
+
+            FileUpload::make('image')
+                ->directory('products')
+                ->image()
+                ->maxSize(2048)
+                ->required(),
+            
+            Forms\Components\Select::make('category_id')
+                ->options(fn() => \App\Models\Category::whereNotNull('parent_id')->pluck('name', 'id'))
+                ->required()
+                ->label('Sub Category'),
+        ]);
     }
 
     public static function table(Table $table): Table

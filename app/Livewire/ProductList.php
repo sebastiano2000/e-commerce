@@ -12,6 +12,7 @@ class ProductList extends Component
     public $editingProduct = null; // Initialize it here
     public $products;
     public $addingProduct = false;
+    public $categories;
     public $newProduct = [
         'name'  => '',
         'price' => '',
@@ -27,6 +28,7 @@ class ProductList extends Component
     public function mount()
     {
         $this->loadProducts();
+        $this->categories = \App\Models\Category::pluck('name', 'id');
     }
 
     public function loadProducts()
@@ -52,8 +54,17 @@ class ProductList extends Component
 
     public function render()
     {
-        $products = Product::where('name', 'like', '%' . $this->search . '%')->paginate(5);
+        $products = Product::where('name', 'like', '%' . $this->search . '%')->with('category')->paginate(5);
         return view('livewire.product-list', compact('products'));
+    }
+
+    public function searchProducts()
+    {
+        $this->products = Product::where('name', 'like', '%' . $this->search . '%')
+            ->orWhereHas('category', function($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->get();
     }
 
     public function saveEdit()
@@ -65,6 +76,7 @@ class ProductList extends Component
                 $product->update([
                     'name' => $this->editingProduct['name'],
                     'price' => $this->editingProduct['price'],
+                    'category_id' => $this->editingProduct['category_id'],
                 ]);
 
                 session()->flash('message', 'Product updated successfully.');
@@ -92,6 +104,7 @@ class ProductList extends Component
         $this->validate([
             'newProduct.name'  => 'required|string|max:255',
             'newProduct.price' => 'required|numeric|min:0',
+            'newProduct.category_id' => 'required|exists:categories,id',
         ]);
 
         Product::create($this->newProduct);
